@@ -48,7 +48,7 @@ class Test {
         val price: String = "${'$'}99.9"// 显示$99.9
 
 
-        // 所有变量不能初始化为空。变量类型的后面加?，才能初始化为空，但使用时必须给出补救方案
+        // 所有变量不能初始化为空。变量类型的后面加?，才能初始化为空，但使用时必须给出补救方案（抛给了调用者）
         var info1: String? = null
 //        println(info1.length)// 直接使用会报错
         println(info1?.length)// 补救方式一：变量后加?，表示为空则不执行?后面。相当于Java判空后不为空再执行
@@ -218,4 +218,155 @@ class Test {
         }
     }
 
+    // 循环
+    fun foreach() {
+        val items = listOf<String>("张三", "李四")
+        // 用区间遍历集合
+        for (item in items) {
+            println(item)
+        }
+        // 用for each遍历集合
+        // 集合元素的默认变量名为it
+        items.forEach {
+            println(it)
+        }
+        // 修改it变量名
+        items.forEach { aaa ->
+            println(aaa)
+        }
+
+        // 用集合的indices变量，可以取到下标（indices是index的复数形式）
+        for (index in items.indices) {
+            // items[index]是表达式，需要用{}括起来
+            println("index: $index, value: ${items[index]}")
+        }
+    }
+
+
+    // 类与对象
+    // Kotlin类默认为public final
+    // 类可以没有{}
+    class Empty
+
+    // Kotlin构造函数分为主构造和此构造。类名后面是主构造，只能有一个
+    // open代表不是final，可以被继承
+    open class Person(id: Int) {
+        // constructor是次构造，必须用:调用主构造。:代表继承或实现
+        constructor(id: Int, name: String) : this(id) {
+        }
+
+        // 次构造的重载
+        constructor(id: Int, sex: Char) : this(id) {
+        }
+
+        // 构造函数可以没有{}
+        constructor() : this(0)
+    }
+
+    fun clazz() {
+        // 创建对象不用new
+        val person = Person()
+
+    }
+
+    // 父类有构造函数时，声明继承关系时必须要调用
+    // 后面的父类可以直接用前面子类的参数
+    class Student(id: Int) : Person(id) {
+        // Java中成员有默认值，只有方法中的变量没有默认值
+        // Kotlin中所有变量都没有默认值，需要指定
+        var age: Int = 0
+
+        // 可以用懒加载lateinit不初始化默认值。因为若初始化为null，还要加?，麻烦
+        lateinit var name: String
+    }
+
+    // 接口默认是open的，以便实现
+    interface Callback {
+        fun callbackMethod(): Boolean
+    }
+
+    // 抽象类默认是open的
+    abstract class PersonImpl : Callback {
+        abstract fun getLayoutId(): Int
+
+    }
+
+    // 因为类有默认的无参主构造函数，所以继承的类要加()
+    class StudentImpl : PersonImpl() {
+        // 函数表达式。没有函数体的函数
+        override fun getLayoutId(): Int = 8
+
+        override fun callbackMethod(): Boolean = false
+
+    }
+
+    // 数据类代替Java Bean，更简洁。自动生成了get/set、构造函数、toString/hashcode/equals、copy
+    data class User(val id: Int, val name: String, val sex: Char)
+
+    fun t() {
+        val user = User(1, "Tom", 'F')
+
+        // 可以直接取出数据类的属性并赋给新的变量
+        val (myId, myName, mySex) = user.copy()
+
+        // 用_表示拒收第几个属性
+        val (_, myName1, _) = user.copy()
+    }
+
+    // object代表单例类，是没有构造函数的。用普通的饿汉式实现
+    object MyEngine {
+
+        fun m() {
+            println("m")
+        }
+    }
+
+    fun a() {
+        // object创建对象时不用加()
+        MyEngine.m()
+    }
+
+
+    // 写一个延迟初始化的饿汉式单例
+    class NetManager {
+
+        object Holder {
+            val instance = NetManager()
+        }
+
+        // 派生类companion object，跟着外部类一起出生。里面的都相当于Java的static
+        companion object {
+            fun getInstance(): NetManager = Holder.instance
+        }
+
+        fun show() {
+            println("NetManager")
+        }
+    }
+
+    fun b() {
+        // 创建单例类的对象
+        val net = NetManager.getInstance()
+        net.show()
+    }
+
+
+    class Test {
+        val i = "aaa"
+
+        // 不像Java。这不是个内部类，故拿不到外部类的成员。只是个嵌套类
+        class Sub {
+            fun show() {
+                // 拿不到i，报错
+//                println(i)
+            }
+        }
+
+        // inner class才是内部类
+        inner class Sub2 {
+            fun show() {
+                println(i)
+            }
+        }
+    }
 }
