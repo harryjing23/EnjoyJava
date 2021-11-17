@@ -313,7 +313,7 @@ class Test {
         val (_, myName1, _) = user.copy()
     }
 
-    // object代表单例类，是没有构造函数的。用普通的饿汉式实现
+    // object代表单例类，是没有构造函数的。用普通的饿汉式实现，内部用静态的INSTANCE持有实例
     object MyEngine {
 
         fun m() {
@@ -322,7 +322,8 @@ class Test {
     }
 
     fun a() {
-        // object创建对象时不用加()
+        // object创建对象时不用加()，所以没有主构造，更没有次构造。
+        // 使用起来类似Java的静态，但想让他真正的静态，要在成员上加@JvmStatic
         MyEngine.m()
     }
 

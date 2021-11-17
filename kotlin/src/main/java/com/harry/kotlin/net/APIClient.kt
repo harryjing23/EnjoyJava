@@ -33,6 +33,7 @@ class APIClient {
 
 
         val retrofit: Retrofit = Retrofit.Builder()
+            .baseUrl("https://www.wanandroid.com")
             // 请求
             .client(mOkHttpClient)
 
