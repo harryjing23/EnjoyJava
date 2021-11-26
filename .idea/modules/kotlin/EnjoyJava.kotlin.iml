@@ -35,7 +35,7 @@
           <option name="noStdlib" value="true" />
           <option name="moduleName" value="kotlin_debug" />
           <option name="languageVersion" value="1.6" />
-          <option name="apiVersion" value="1.5" />
+          <option name="apiVersion" value="1.6" />
           <option name="pluginOptions">
             <array>
               <option value="plugin:org.jetbrains.kotlin.android:experimental=false" />
