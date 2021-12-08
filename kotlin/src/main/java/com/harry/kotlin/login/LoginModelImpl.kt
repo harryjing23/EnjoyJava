@@ -3,7 +3,9 @@ package com.harry.kotlin.login
 import android.content.Context
 import android.util.Log
 import com.harry.kotlin.api.WanAndroidAPI
-import com.harry.kotlin.entity.LoginResponse
+import com.harry.kotlin.entity.LoginRegisterResponse
+import com.harry.kotlin.login.interf.LoginModel
+import com.harry.kotlin.login.interf.LoginPresenter
 import com.harry.kotlin.net.APIClient
 import com.harry.kotlin.net.APIResponse
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -38,8 +40,8 @@ class LoginModelImpl : LoginModel {
 //                        }
 //                    })
             // object: 标识匿名内部类
-            .subscribe(object : APIResponse<LoginResponse>(context) {
-                override fun success(data: LoginResponse?) {
+            .subscribe(object : APIResponse<LoginRegisterResponse>(context) {
+                override fun success(data: LoginRegisterResponse?) {
                     Log.d(TAG, "success: $data")
 
                     onLoginListener.loginSuccess(data)

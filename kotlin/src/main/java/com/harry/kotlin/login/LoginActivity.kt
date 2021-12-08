@@ -1,12 +1,17 @@
 package com.harry.kotlin.login
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.harry.kotlin.MainActivity
 import com.harry.kotlin.R
 import com.harry.kotlin.base.BaseActivity
-import com.harry.kotlin.entity.LoginResponse
+import com.harry.kotlin.entity.LoginRegisterResponse
+import com.harry.kotlin.login.interf.LoginPresenter
+import com.harry.kotlin.login.interf.LoginView
+import com.harry.kotlin.register.RegisterActivity
 import kotlinx.android.synthetic.main.activity_login.*
 
 
@@ -26,6 +31,9 @@ class LoginActivity : BaseActivity<LoginPresenter>(), LoginView {
 
         // 在build.gradle中apply plugin: 'kotlin-android-extensions' 才会有自动findviewbyid
         bt_login.setOnClickListener(onClickListener)
+        bt_register.setOnClickListener(View.OnClickListener {
+            startActivity(Intent(this@LoginActivity, RegisterActivity::class.java))
+        })
 
 //        p = LoginPresenterImpl(this)
     }
@@ -46,9 +54,11 @@ class LoginActivity : BaseActivity<LoginPresenter>(), LoginView {
         }
     }
 
-    override fun loginSuccess(loginBean: LoginResponse?) {
+    override fun loginSuccess(loginRegisterBean: LoginRegisterResponse?) {
         // Kotlin没有LoginActivity.this，用类自带的标签。this@LoginActivity
         Toast.makeText(this@LoginActivity, "登录成功", Toast.LENGTH_SHORT).show()
+
+        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
     }
 
     override fun loginFailure(errorMsg: String?) {

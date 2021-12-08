@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    tools:context=".register.RegisterActivity">
+
+    <EditText
+        android:id="@+id/et_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="用户名"
+        app:layout_constraintBottom_toTopOf="@id/et_password"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="密码"
+        app:layout_constraintBottom_toTopOf="@id/et_repassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_username" />
+
+    <EditText
+        android:id="@+id/et_repassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="确认密码"
+        app:layout_constraintBottom_toTopOf="@id/et_repassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_password" />
+
+    <Button
+        android:id="@+id/bt_register"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="注册"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_repassword" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

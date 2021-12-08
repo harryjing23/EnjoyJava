@@ -1,7 +1,7 @@
 package com.harry.kotlin.api
 
-import com.harry.kotlin.entity.LoginResponse
-import com.harry.kotlin.entity.LoginResponseWrapper
+import com.harry.kotlin.entity.LoginRegisterResponse
+import com.harry.kotlin.entity.LoginRegisterResponseWrapper
 import io.reactivex.rxjava3.core.Observable
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -17,12 +17,18 @@ interface WanAndroidAPI {
 
     // 登录
 
-    @POST("/use|r/login")
+    @POST("/user/login")
     @FormUrlEncoded
     fun loginAction(@Field("username") username: String, @Field("password") password: String)
-            : Observable<LoginResponseWrapper<LoginResponse>>
-
+            : Observable<LoginRegisterResponseWrapper<LoginRegisterResponse>>
 
 
     // 注册
+    @POST("/user/register")
+    @FormUrlEncoded
+    fun registerAction(
+        @Field("username") username: String,
+        @Field("password") password: String,
+        @Field("repassword") repassword: String
+    ): Observable<LoginRegisterResponseWrapper<LoginRegisterResponse>>
 }

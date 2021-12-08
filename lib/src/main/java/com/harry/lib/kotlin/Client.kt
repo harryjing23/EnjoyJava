@@ -50,6 +50,15 @@ fun main() {
             println(info)
         }
     })
+
+
+    // Kotlin调用隔离函数时，``可以不加
+    `   `("show1 is available")
+
+    // 调用高阶函数。参数要传一个方法体
+    show(true, { t -> println(t) })
+    // 也可以用lambda表达式
+    show(false) { println(it) }
 }
 
 // Class类和泛型类都是Java的。不能混搭，要一致
@@ -58,4 +67,21 @@ fun showClass(clazz: Class<JavaStudent>) {
 
 // KClass类和泛型类都是Kotlin的。不能混搭，要一致
 fun showClass2(clazz: KClass<KtStudent>) {
+}
+
+// 用反引号``括起来，可以强行将不合法的字符变成合法。但Java无法调用
+fun `   `(name: String) {
+    println("name: $name")
+}
+
+// 高阶函数。函数的参数也是函数
+// loginMethod是方法名，(Boolean)是参数类型，Unit是返回值类型
+fun show(isLogin: Boolean, loginMethod: (Boolean) -> Unit) {
+    if (isLogin) {
+        println("登录成功")
+        loginMethod(true)
+    } else {
+        println("登录失败")
+        loginMethod(false)
+    }
 }

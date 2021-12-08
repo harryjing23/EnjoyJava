@@ -1,7 +1,7 @@
 package com.harry.kotlin.net
 
 import android.content.Context
-import com.harry.kotlin.entity.LoginResponseWrapper
+import com.harry.kotlin.entity.LoginRegisterResponseWrapper
 import io.reactivex.rxjava3.core.Observer
 import io.reactivex.rxjava3.disposables.Disposable
 
@@ -12,7 +12,7 @@ import io.reactivex.rxjava3.disposables.Disposable
 
 // 拦截。自定义observer操作符。目的：将包装Bean拆成两份，成功给数据Bean，失败给错误信息
 abstract class APIResponse<T>(val context: Context)// 主构造传Context以便显示UI
-    : Observer<LoginResponseWrapper<T>> {
+    : Observer<LoginRegisterResponseWrapper<T>> {
 
     private var isShow: Boolean = true
 
@@ -34,9 +34,11 @@ abstract class APIResponse<T>(val context: Context)// 主构造传Context以便�
     }
 
     // 上游流下了数据
-    override fun onNext(t: LoginResponseWrapper<T>) {
+    override fun onNext(t: LoginRegisterResponseWrapper<T>) {
         if (t.data == null) {
             failure("没有数据。msg: ${t.errorMsg}")
+        } else {
+            success(t.data)
         }
     }
 

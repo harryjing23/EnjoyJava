@@ -1,6 +1,6 @@
-package com.harry.kotlin.login
+package com.harry.kotlin.login.interf
 
-import com.harry.kotlin.entity.LoginResponse
+import com.harry.kotlin.entity.LoginRegisterResponse
 
 /**
  * Created on 2021/11/25.
@@ -11,7 +11,7 @@ import com.harry.kotlin.entity.LoginResponse
 // View层。实现是Activity/Fragment
 interface LoginView {
 
-    fun loginSuccess(loginBean: LoginResponse?)
+    fun loginSuccess(loginRegisterBean: LoginRegisterResponse?)
 
     fun loginFailure(errorMsg: String?)
 

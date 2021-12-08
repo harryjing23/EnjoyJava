@@ -2,6 +2,8 @@ package com.harry.lib.java;
 
 import com.harry.lib.kotlin.MyUtils;
 import com.harry.lib.kotlin.MyUtilsKt;
+import com.harry.lib.kotlin.Student;
+import com.harry.lib.kotlin.UserKt;
 
 /**
  * Created on 2021/11/16.
@@ -17,5 +19,8 @@ public class Client {
 
         // Kotlin类里面的成员则正常调用
         new MyUtils().show2("Derry2");
+
+        // Kotlin的扩展函数在Java中，要当做普通Kotlin函数，但多了一个参数（扩展类）
+        UserKt.show(new Student("jack", 12));
     }
 }

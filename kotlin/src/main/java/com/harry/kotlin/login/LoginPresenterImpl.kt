@@ -1,7 +1,10 @@
 package com.harry.kotlin.login
 
 import android.content.Context
-import com.harry.kotlin.entity.LoginResponse
+import com.harry.kotlin.entity.LoginRegisterResponse
+import com.harry.kotlin.login.interf.LoginModel
+import com.harry.kotlin.login.interf.LoginPresenter
+import com.harry.kotlin.login.interf.LoginView
 
 /**
  * Created on 2021/11/26.
@@ -30,10 +33,10 @@ class LoginPresenterImpl(var loginView: LoginView?) : LoginPresenter,
     }
 
     // 接收Model回调
-    override fun loginSuccess(loginBean: LoginResponse?) {
+    override fun loginSuccess(loginRegisterBean: LoginRegisterResponse?) {
         // 一大堆校验等前置工作
 
-        loginView?.loginSuccess(loginBean)
+        loginView?.loginSuccess(loginRegisterBean)
     }
 
     override fun loginFailure(errorMsg: String?) {

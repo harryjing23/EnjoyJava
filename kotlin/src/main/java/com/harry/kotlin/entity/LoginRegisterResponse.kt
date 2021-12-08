@@ -6,7 +6,7 @@ package com.harry.kotlin.entity
  */
 
 // Java中的泛型通配符为?。Kotlin中用*
-data class LoginResponse(
+data class LoginRegisterResponse(
     val admin: Boolean,
     val chapterTops: List<*>,
     val collectIds: List<*>,
