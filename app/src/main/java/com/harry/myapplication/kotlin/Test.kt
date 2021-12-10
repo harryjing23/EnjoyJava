@@ -68,6 +68,7 @@ class Test {
 
 
     // 可变长参数vararg
+    // 若将可变参数传给另一个函数的可变参数，前面要加*
     fun lengthMethod(vararg value: Int) {
         // 使用方法类似于数组。也可以用区间遍历
         for (i in value) {
