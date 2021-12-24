@@ -48,4 +48,31 @@ fun main() {
         println("numb is $numb")
         numb + 1000// 返回值
     }
+
+
+    loginEngine("Derry", "123456")
+}
+
+// typealias类型别名。增加代码可读性，给类和函数定义一个别名（如长类名和带泛型的类）
+// 给高阶函数定义别名
+typealias RequestLogin = (String, String) -> Unit
+
+// 高阶函数作为参数时，也可以直接用别名
+private fun loginService(
+    username: String,
+    password: String,
+    requestLogin: RequestLogin
+) {
+    requestLogin(username, password)
+}
+
+fun loginEngine(username: String, password: String): Unit {
+    // 高阶函数也可以在()参数外，用{}实现
+    loginService(username, password) { name, pwd ->
+        if (name == "Derry" && pwd == "123456") {
+            println("login success")
+        } else {
+            println("login failure")
+        }
+    }
 }

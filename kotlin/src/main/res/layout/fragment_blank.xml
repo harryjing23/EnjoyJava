@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sv_show"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".home.BlankFragment">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher" />
+
+        <!--        ScrollView内嵌套的ListView，ListView会显示不全，RecyclerView则不会-->
+        <com.harry.kotlin.home.CustomListView
+            android:id="@+id/lv_show"
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/ic_launcher" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</ScrollView>
