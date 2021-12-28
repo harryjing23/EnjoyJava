@@ -1,10 +1,12 @@
 package com.harry.kotlin.home
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.harry.kotlin.R
@@ -64,4 +66,9 @@ class BlankFragment : Fragment() {
     private fun showResultSuccess() {
         // 展示UI
     }
+}
+
+// 类似于给泛型增加扩展函数。在四大组件中可以直接调用toast函数
+fun Context.toast(info: String) {
+    Toast.makeText(this, info, Toast.LENGTH_SHORT).show()
 }
