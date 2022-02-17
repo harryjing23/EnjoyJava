@@ -26,9 +26,17 @@ class APIClient {
     fun <T> instanceRetrofit(apiInterface: Class<T>): T {
 
         val mOkHttpClient = OkHttpClient().newBuilder()
-            .readTimeout(10, TimeUnit.SECONDS)
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS)
+//            .readTimeout(10, TimeUnit.SECONDS)
+//            .connectTimeout(10, TimeUnit.SECONDS)
+//            .writeTimeout(10, TimeUnit.SECONDS)
+
+            // 用高阶代替上面的代码。而且省略了this
+            .myApply {
+                readTimeout(10, TimeUnit.SECONDS)
+                connectTimeout(10, TimeUnit.SECONDS)
+                writeTimeout(10, TimeUnit.SECONDS)
+            }
+
             .build()
 
 
@@ -45,4 +53,10 @@ class APIClient {
 
         return retrofit.create(apiInterface)
     }
+}
+
+// 与Kotlin的apply原理相同
+fun <T> T.myApply(mm: T.() -> Unit): T {
+    mm()
+    return this
 }

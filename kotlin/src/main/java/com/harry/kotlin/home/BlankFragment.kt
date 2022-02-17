@@ -34,6 +34,12 @@ class BlankFragment : Fragment() {
         requestHomeData()
     }
 
+    // onAttach->onCreate->onCreateView->onViewCreated->onActivityCreated->onStart
+    // 表示view已经created
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
     private fun requestHomeData() {
         RequestApi.instanceRequestAction("url", object : NetworkResultData() {
             override fun requestError(info: String) {

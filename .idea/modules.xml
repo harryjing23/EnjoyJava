@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/EnjoyJava.iml" filepath="$PROJECT_DIR$/.idea/modules/EnjoyJava.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/EnjoyJava.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/EnjoyJava.app.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/compiler/EnjoyJava.compiler.iml" filepath="$PROJECT_DIR$/.idea/modules/compiler/EnjoyJava.compiler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/coroutine/EnjoyJava.coroutine.iml" filepath="$PROJECT_DIR$/.idea/modules/coroutine/EnjoyJava.coroutine.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/kotlin/EnjoyJava.kotlin.iml" filepath="$PROJECT_DIR$/.idea/modules/kotlin/EnjoyJava.kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/lib/EnjoyJava.lib.iml" filepath="$PROJECT_DIR$/.idea/modules/lib/EnjoyJava.lib.iml" />
     </modules>
