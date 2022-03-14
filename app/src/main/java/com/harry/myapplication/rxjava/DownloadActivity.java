@@ -170,7 +170,7 @@ public class DownloadActivity extends AppCompatActivity {
                         });
     }
 
-    private final static <UD> ObservableTransformer<UD, UD> rxud() {
+    public final static <UD> ObservableTransformer<UD, UD> rxud() {
         // ObservableTransformer是将一个Observable添加额外操作然后转换成另一个Observable。即upstream转成downstream
         return new ObservableTransformer<UD, UD>() {
             @Override
