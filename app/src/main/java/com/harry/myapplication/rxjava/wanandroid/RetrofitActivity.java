@@ -100,6 +100,7 @@ public class RetrofitActivity extends AppCompatActivity {
     }
 
     // 用flatMap解决网络请求的嵌套乱的问题
+    // doOnNext的使用
     @SuppressLint("CheckResult")
     public void flatMapNetwork(View view) {
 
@@ -115,6 +116,16 @@ public class RetrofitActivity extends AppCompatActivity {
                                 return mApi.getProject();// 请求主数据。getProject返回类型是Observable，用flatMap刚刚好
                             }
                         })
+                .observeOn(AndroidSchedulers.mainThread())
+                // doOnNext类似于subscribe，但是doOnNext会继续返回Observable，便于继续链式调用，subscribe返回Disposable则链式结束
+                // doOnNext把上面的Observable中的数据扒出来，再把数据装进Observable向下传
+                .doOnNext(new Consumer<ProjectBean>() {
+                    @Override
+                    public void accept(ProjectBean projectBean) throws Throwable {
+                        // do something eg.在主线程更新UI
+                    }
+                })
+                .observeOn(Schedulers.io())
                 .flatMap(new Function<ProjectBean, ObservableSource<ProjectBean.Data>>() {
                     @Override
                     public ObservableSource<ProjectBean.Data> apply(ProjectBean projectBean) throws Throwable {

@@ -1,18 +1,16 @@
 package com.harry.myapplication.rxjava;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.harry.myapplication.R;
 
@@ -25,19 +23,19 @@ import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.ObservableSource;
 import io.reactivex.rxjava3.core.ObservableTransformer;
 import io.reactivex.rxjava3.core.Observer;
-import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Function;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 /**
- * Rxjava是用响应式编程思想（"从起点到终点"的链式编程）来解决一连串的先后顺序事件。例如网络请求
+ * Rxjava是用响应式编程思想（"从起点到终点"的链式编程，每个事件都可以对数据进行处理再传给下一个事件）来解决一连串的先后顺序事件。例如网络请求
  */
 public class DownloadActivity extends AppCompatActivity {
 
     private ProgressDialog mProgressDialog;
     public static final String PATH = "https://t7.baidu.com/it/u=1595072465,3644073269&fm=193&f=GIF";
     private ImageView mImageView;
+    private Disposable mDisposable;
 
     /**
      * 普通写法的网络请求。每个人的实现方式都可能不同，不易管理
@@ -59,6 +57,14 @@ public class DownloadActivity extends AppCompatActivity {
             mProgressDialog.dismiss();
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
+    }
 
     public void download(View view) {
         mProgressDialog = new ProgressDialog(this);
@@ -139,13 +145,17 @@ public class DownloadActivity extends AppCompatActivity {
                 .subscribe(
                         // 终点Observer（也可以用简化版的Consumer）。泛型的类型是上一层事件的参数类型
                         new Observer<Bitmap>() {
-                            // 订阅开始。### 第一步
+                            // 订阅开始。代码在哪个线程，就执行在哪，在subscribeOn切换线程的前面 ### 第一步
                             @Override
                             public void onSubscribe(@io.reactivex.rxjava3.annotations.NonNull Disposable d) {
 
                                 mProgressDialog = new ProgressDialog(DownloadActivity.this);
                                 mProgressDialog.setTitle("downloading");
                                 mProgressDialog.show();
+
+                                // Disposable在Activity的onDestroy时要dispose
+                                // 因为事件在分发时会先看isDispose()，Activity退出时所有事件还没执行完，可能内存泄漏
+                                mDisposable = d;
                             }
 
                             // 拿到事件。参数是Observer的泛型。### 第五步
