@@ -8,11 +8,16 @@ import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 
 /**
+ * RxJava的创建Observable、创建Observer、订阅的流程
+ * <p>
+ * RxJava的观察者模式并不是标准的，标准的是一个Observable多个Observer，RxJava是多个Observable一个Observer
+ * RxJava更像是发布订阅模式，中间多了一层发射器，Observable->发射器emitter->Observer。耦合度更低
+ * <p>
  * Created on 2022/3/16.
  *
  * @author harry
  */
-public class Test {
+public class Observe {
 
     private void test() {
         Observable
