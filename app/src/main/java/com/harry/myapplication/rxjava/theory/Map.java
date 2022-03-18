@@ -33,6 +33,9 @@ public class Map {
                     public void subscribe(@NonNull ObservableEmitter<String> emitter) throws Throwable {
                         // 会调用下一层包裹的onNext，也就是MapObserver.onNext()
                         emitter.onNext("bitmap");
+
+                        // onComplete同理
+                        emitter.onComplete();
                     }
                 })
                 // 就会走ObservableCreate.map。返回的是ObservableMap
