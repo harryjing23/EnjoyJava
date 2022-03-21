@@ -7,9 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.harry.myapplication.R;
 
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.annotations.NonNull;
 import io.reactivex.rxjava3.core.Observable;
@@ -19,8 +16,6 @@ import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.core.Scheduler;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Function;
-import io.reactivex.rxjava3.internal.disposables.EmptyDisposable;
-import io.reactivex.rxjava3.internal.operators.observable.ObservableSubscribeOn;
 import io.reactivex.rxjava3.plugins.RxJavaPlugins;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
@@ -33,10 +28,15 @@ public class ThreadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_thread);
     }
 
-    /**
-     * 以Scheduler.io()为例来分析源码，其他Scheduler逻辑也类似
+    /*
+    ###分析源码时，先不要纠结代码细节，先看整体流程###
+    分析源码可知，RxJava所有操作符都需要subscribe()订阅来触发
      */
-    private void test() {
+
+    /**
+     * 以Scheduler.io()为例来分析subscribeOn()源码，其他Scheduler逻辑也类似
+     */
+    private void subscribeOn() {
         Observable
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
@@ -48,7 +48,7 @@ public class ThreadActivity extends AppCompatActivity {
                 .subscribeOn(
                         // 第一步。源码new了IoScheduler，经过多层包装，最终走到对线程池的管控
                         Schedulers.io())
-                // 第三步。走Observable.subscribe()
+                // 第三步。触发线程切换。走Observable.subscribe()
                 // 进而调用ObservableSubscribeOn.subscribeActual()等等，经过层层包装，最终用线程池执行了Runnable
                 .subscribe(new Observer<String>() {
                     @Override
@@ -188,9 +188,11 @@ public class ThreadActivity extends AppCompatActivity {
 //     }
 
 
-    // ----------------------observeOn()给下面代码切换线程
+    /**
+     * 以AndroidSchedulers.mainThread()为例来分析observeOn()源码，其他Scheduler逻辑也类似
+     */
 
-    private void test1() {
+    private void observeOn() {
         Observable
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
@@ -198,7 +200,12 @@ public class ThreadActivity extends AppCompatActivity {
 
                     }
                 })
-                .observeOn(AndroidSchedulers.mainThread())
+                // 第二步。返回ObservableObserveOn，将HandlerScheduler包装进去。
+                .observeOn(
+                        // 第一步。与IoScheduler流程类似，实际返回的是HandlerScheduler，里面创建了主线程Handler
+                        AndroidSchedulers.mainThread())
+                // 第三步。触发线程切换。走Observable.subscribe()
+                // 进而调用ObservableObserveOn.subscribeActual()，会将自定义Observer包装成ObserveOnObserver
                 .subscribe(new Observer<String>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
@@ -221,4 +228,71 @@ public class ThreadActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    // 下面是创建HandlerScheduler的源码。
+//    private static final class MainHolder {
+    // 传入了一个主线程的Handler，所以可以返回主线程
+//        static final Scheduler DEFAULT
+//                = new HandlerScheduler(new Handler(Looper.getMainLooper()), true);
+//    }
+
+    // 下面是ObserveOnObserver.onNext()源码。
+//    public void onNext(T t) {
+//        if (done) {
+//            return;
+//        }
+//
+//        if (sourceMode != QueueDisposable.ASYNC) {
+//            queue.offer(t);
+//        }
+    // 调用schedule()
+//        schedule();
+//    }
+
+    // 下面是ObserveOnObserver.schedule()源码。
+//    void schedule() {
+//        if (getAndIncrement() == 0) {
+    // 这里的worker是HandlerScheduler.createWork()得出的HandlerWorker，进而调用HandlerWorker.schedule()
+    // ObserveOnObserver实现了Runnable，并传给了schedule()
+    // 所以ObserveOnObserver.run()会运行在主线程，在里面调用了自定义Observer.onNext()
+//            worker.schedule(this);
+//        }
+//    }
+
+    // 下面是HandlerWorker.schedule()源码。
+//    public Disposable schedule(Runnable run, long delay, TimeUnit unit) {
+//        if (run == null) throw new NullPointerException("run == null");
+//        if (unit == null) throw new NullPointerException("unit == null");
+//
+//        if (disposed) {
+//            return Disposable.disposed();
+//        }
+//
+//        run = RxJavaPlugins.onSchedule(run);
+//
+    // ScheduledRunnable将Runnable包装了一层，以便用dispose控制中断
+//        ScheduledRunnable scheduled = new ScheduledRunnable(handler, run);
+//
+    // 用Message.obtain(handler，runnable)，再handler.sendMessage(message)，即可在Handler中运行Runnable
+//        Message message = Message.obtain(handler, scheduled);
+//        message.obj = this; // Used as token for batch disposal of this worker's runnables.
+//
+//        if (async) {
+//            message.setAsynchronous(true);
+//        }
+//
+//        handler.sendMessageDelayed(message, unit.toMillis(delay));
+//
+//        // Re-check disposed state for removing in case we were racing a call to dispose().
+//        if (disposed) {
+//            handler.removeCallbacks(scheduled);
+//            return Disposable.disposed();
+//        }
+//
+//        return scheduled;
+//    }
+
+    /**
+     * 所以：多个subscribeOn()，最上面的线程有效；多个observeOn()，最下面的线程有效
+     */
 }
