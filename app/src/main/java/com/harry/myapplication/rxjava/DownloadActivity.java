@@ -49,23 +49,6 @@ public class DownloadActivity extends AppCompatActivity {
         mImageView = (ImageView) findViewById(R.id.iv_show);
     }
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            Bitmap bitmap = (Bitmap) msg.obj;
-            mImageView.setImageBitmap(bitmap);
-            mProgressDialog.dismiss();
-        }
-    };
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mDisposable != null && !mDisposable.isDisposed()) {
-            mDisposable.dispose();
-        }
-    }
-
     public void download(View view) {
         mProgressDialog = new ProgressDialog(this);
         mProgressDialog.setTitle("下载中。。。");
@@ -94,6 +77,15 @@ public class DownloadActivity extends AppCompatActivity {
             }
         }).start();
     }
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            Bitmap bitmap = (Bitmap) msg.obj;
+            mImageView.setImageBitmap(bitmap);
+            mProgressDialog.dismiss();
+        }
+    };
 
 
     /**
@@ -180,11 +172,20 @@ public class DownloadActivity extends AppCompatActivity {
                         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 调用dispose()
+        if (mDisposable != null && !mDisposable.isDisposed()) {
+            mDisposable.dispose();
+        }
+    }
+
     public final static <UD> ObservableTransformer<UD, UD> rxud() {
         // ObservableTransformer是将一个Observable添加额外操作然后转换成另一个Observable。即upstream转成downstream
         return new ObservableTransformer<UD, UD>() {
             @Override
-            public @io.reactivex.rxjava3.annotations.NonNull ObservableSource<UD> apply(@io.reactivex.rxjava3.annotations.NonNull Observable<UD> upstream) {
+            public ObservableSource<UD> apply(Observable<UD> upstream) {
                 return upstream
                         // 为上面的所有事件分配为IO线程
                         .subscribeOn(Schedulers.io())
