@@ -109,7 +109,6 @@ public class RetrofitActivity extends AppCompatActivity {
                 // 给下面所有事件分配子线程
                 .observeOn(Schedulers.io())
                 .flatMap(
-                        // ObservableSource<T>的泛型默认是?，可以修改成要返回的类型
                         new Function<Unit, ObservableSource<ProjectBean>>() {
                             @Override
                             public ObservableSource<ProjectBean> apply(Unit unit) throws Throwable {
@@ -117,8 +116,7 @@ public class RetrofitActivity extends AppCompatActivity {
                             }
                         })
                 .observeOn(AndroidSchedulers.mainThread())
-                // doOnNext类似于subscribe，但是doOnNext会继续返回Observable，便于继续链式调用，subscribe返回Disposable则链式结束
-                // doOnNext把上面的Observable中的数据扒出来，再把数据装进Observable向下传
+                // doOnNext类似于subscribe，但是doOnNext会返回上游的Observable，便于继续链式调用，subscribe返回Disposable则链式结束
                 .doOnNext(new Consumer<ProjectBean>() {
                     @Override
                     public void accept(ProjectBean projectBean) throws Throwable {
@@ -126,6 +124,7 @@ public class RetrofitActivity extends AppCompatActivity {
                     }
                 })
                 .observeOn(Schedulers.io())
+                // flatMap中的第一个泛型是上游Observable<T>的泛型，第二个ObservableSource<T>的泛型默认是?，可以修改成要返回的类型
                 .flatMap(new Function<ProjectBean, ObservableSource<ProjectBean.Data>>() {
                     @Override
                     public ObservableSource<ProjectBean.Data> apply(ProjectBean projectBean) throws Throwable {

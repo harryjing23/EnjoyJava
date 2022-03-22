@@ -46,7 +46,7 @@ public class ThreadActivity extends AppCompatActivity {
                 })
                 // 第二步。返回类型为ObservableSubscribeOn，将IoScheduler包装到ObservableSubscribeOn里
                 .subscribeOn(
-                        // 第一步。源码new了IoScheduler，经过多层包装，最终走到对线程池的管控
+                        // 第一步。源码new了IoScheduler，经过多层包装，最终走到对线程池的管控（IOTask->IoScheduler()->CachedWorkerPool）
                         Schedulers.io())
                 // 第三步。触发线程切换。走Observable.subscribe()
                 // 进而调用ObservableSubscribeOn.subscribeActual()等等，经过层层包装，最终用线程池执行了Runnable
@@ -112,12 +112,12 @@ public class ThreadActivity extends AppCompatActivity {
     // --------------------Schedulers的IO--------------------------
     // 由Schedulers.io()源码可知，IO就是实际的Scheduler
     // 下面是Schedulers的静态代码块的源码。对Schedulers的各种策略进行初始化，RxJavaPlugins的init方法是hook用，实际起作用的是里面的new
-    // 通过IOTask.get()->new IoScheduler->IoScheduler.start()->CachedWorkerPool就创建了线程池Executors.newScheduledThreadPool
 //    static {
 //        SINGLE = RxJavaPlugins.initSingleScheduler(new Schedulers.SingleTask());
 //
 //        COMPUTATION = RxJavaPlugins.initComputationScheduler(new Schedulers.ComputationTask());
 //
+    // 通过IOTask.get()->new IoScheduler->IoScheduler.start()->CachedWorkerPool就创建了线程池Executors.newScheduledThreadPool
 //        IO = RxJavaPlugins.initIoScheduler(new Schedulers.IOTask());
 //
 //        TRAMPOLINE = TrampolineScheduler.instance();
@@ -133,6 +133,7 @@ public class ThreadActivity extends AppCompatActivity {
 //        return RxJavaPlugins.onAssembly(new ObservableSubscribeOn<>(this, scheduler));
 //    }
 
+    // 当subscribe订阅触发整个流程时，走subscribeActual()
     // 下面是ObservableSubscribeOn.subscribeActual()源码。
 //    public void subscribeActual(final Observer<? super T> observer) {
     // 将自定义Observer包装成SubscribeOnObserver
@@ -141,11 +142,11 @@ public class ThreadActivity extends AppCompatActivity {
 //        observer.onSubscribe(parent);
 //
     // scheduler就是IoScheduler。SubscribeTask是个Runnable任务，可以被IoScheduler的线程池执行
-    // 里面去调用SubscribeOnObserver，进而调用自定义Observer。这行代码完成了用线程池去执行Runnable任务
+    // 里面去调用SubscribeOnObserver，进而调用SubscribeOnObserver->自定义Observer。这行代码完成了用线程池去执行Runnable任务
 //        parent.setDisposable(scheduler.scheduleDirect(new ObservableSubscribeOn.SubscribeTask(parent)));
 //    }
 
-    // 下面是SubscribeTask源码。
+    // 下面是SubscribeTask源码。将SubscribeOnObserver包装成Runnable，方便切换线程去执行
 //    final class SubscribeTask implements Runnable {
 //        private final ObservableSubscribeOn.SubscribeOnObserver<T> parent;
 //
@@ -183,7 +184,8 @@ public class ThreadActivity extends AppCompatActivity {
 //             return EmptyDisposable.INSTANCE;
 //         }
 //
-    // 这里面就将Runnable交给了threadWorker.scheduleActual()，里面就是线程池ScheduledExecutorService
+    // 这里面就将Runnable交给了threadWorker.scheduleActual()，即NewThreadWorker.scheduleActual()。里面就是用线程池执行Runnable
+    // 最里层的Runnable就调用了SubscribeTask.run()，进而调用了上一层的ObservableCreate.subscribe()，进入了正常的订阅流程
 //         return threadWorker.scheduleActual(action, delayTime, unit, tasks);
 //     }
 
@@ -206,6 +208,7 @@ public class ThreadActivity extends AppCompatActivity {
                         AndroidSchedulers.mainThread())
                 // 第三步。触发线程切换。走Observable.subscribe()
                 // 进而调用ObservableObserveOn.subscribeActual()，会将自定义Observer包装成ObserveOnObserver
+                // 把上面的Scheduler加在了ObserveOnObserver中
                 .subscribe(new Observer<String>() {
                     @Override
                     public void onSubscribe(@NonNull Disposable d) {
@@ -236,6 +239,7 @@ public class ThreadActivity extends AppCompatActivity {
 //                = new HandlerScheduler(new Handler(Looper.getMainLooper()), true);
 //    }
 
+    // 正常订阅subscribe流程到最上层Observable，再往下拆Observer到ObserveOnObserver.onNext()，才切换线程
     // 下面是ObserveOnObserver.onNext()源码。
 //    public void onNext(T t) {
 //        if (done) {
@@ -290,6 +294,17 @@ public class ThreadActivity extends AppCompatActivity {
 //        }
 //
 //        return scheduled;
+//    }
+
+    // 下面是ObserveOnObserver.run()源码。
+//    @Override
+//    public void run() {
+//        if (outputFused) {
+//            drainFused();
+//        } else {
+    // drainNormal()里面都会调用下游Observer的onNext()
+//            drainNormal();
+//        }
 //    }
 
     /**

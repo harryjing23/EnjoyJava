@@ -17,7 +17,7 @@ import io.reactivex.rxjava3.disposables.Disposable;
  *
  * @author harry
  */
-public class Observe {
+public class _2_Observe {
 
     private void test() {
         Observable
@@ -85,7 +85,7 @@ public class Observe {
     // 下面是ObservableCreate（Observable的子类）的subscribeActual()源码
     // 参数就是subscribe时传入的自定义observer
 //    protected void subscribeActual(Observer<? super T> observer) {
-    // new了发射器，参数就是自定义observer
+    // new了发射器，参数就是自定义observer。所以调用发射器的方法，就会进而调用自定义Observer的方法
 //        ObservableCreate.CreateEmitter<T> parent = new ObservableCreate.CreateEmitter<>(observer);
     // 先调用了onSubscribe回调
 //        observer.onSubscribe(parent);

@@ -12,8 +12,10 @@ import io.reactivex.rxjava3.functions.Function;
 
 /**
  * RxJava所有操作符都是：
- * 1. 从最外层代码来讲，Observable是装饰模型，自上到下逐层封装，ObservableCreate->ObservableMap，再subscribe
- * 2. 订阅时，自下向上逐层封包裹；3. 发射事件时，再自上向下逐层拆包裹调用
+ * 1. 从最外层代码来讲，是装饰模型，自上到下逐层封装Observable，再subscribe。（ObservableCreate->ObservableMap->subscribe）
+ * 2. 订阅时，自下向上逐层封包裹Observer。（自定义Observer->MapObserver->发射器，封装为了把自己map的附加功能加进Observer）
+ * 订阅subscribe到最上层事件Observable中，会有发射器，由发射器来调用下一层Observer的onNext、onComplete等方法，一直调用到最下层
+ * 3. 发射事件时，再自上向下逐层拆包裹调用。（发射器->MapObserver->自定义Observer，拆包为了在onNext()中先执行map的附加功能再执行下一层Observer）
  * eg. 下面代码：订阅时 自定义Observer->MapObserver->CreateEmitter。发射时则倒序调用
  * 1.2.3.的整体流程为从上到下再到上再到下，加上洋葱模型（封/拆包裹）的数据结构，实现了卡片式的链式编程，可以随意增减卡片（事件）
  * <p>
@@ -23,7 +25,7 @@ import io.reactivex.rxjava3.functions.Function;
  */
 
 // map操作符的流程
-public class Map {
+public class _3_Map {
 
     private void test() {
         Observable
@@ -31,6 +33,8 @@ public class Map {
                 .create(new ObservableOnSubscribe<String>() {
                     @Override
                     public void subscribe(@NonNull ObservableEmitter<String> emitter) throws Throwable {
+                        // 用发射器emitter来调用Observer中的方法。create操作符中发射器实际是CreateEmitter
+
                         // 会调用下一层包裹的onNext，也就是MapObserver.onNext()
                         emitter.onNext("bitmap");
 

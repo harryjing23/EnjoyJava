@@ -15,7 +15,7 @@ import io.reactivex.rxjava3.plugins.RxJavaPlugins;
  *
  * @author harry
  */
-public class Hook {
+public class _1_Hook {
     private static final String TAG = "Test";
 
     private void test() {
@@ -45,7 +45,7 @@ public class Hook {
     }
 
 
-    // 每个操作符都用RxJavaPlugins.onAssembly()包装一层，hook作全局的监听
+    // 每个操作符都用RxJavaPlugins.onAssembly()中转一次，hook作全局的监听
     // 下面是map()的源码
 //    public final <@NonNull R> Observable<R> map(@NonNull Function<? super T, ? extends R> mapper) {
 //        Objects.requireNonNull(mapper, "mapper is null");
@@ -60,6 +60,15 @@ public class Hook {
 //            return apply(f, source);
 //        }
 //        return source;
+//    }
+
+    // 下面是RxJavaPlugins.apply()源码。将原数据传入apply()，返回新数据
+//    static <@NonNull T, @NonNull R> R apply(@NonNull Function<T, R> f, @NonNull T t) {
+//        try {
+//            return f.apply(t);
+//        } catch (Throwable ex) {
+//            throw ExceptionHelper.wrapOrThrow(ex);
+//        }
 //    }
 
     private void addHook() {
