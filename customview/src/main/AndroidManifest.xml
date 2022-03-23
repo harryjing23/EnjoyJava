@@ -9,7 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.EnjoyJava">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".layout.LayoutActivity"
+            android:exported="true" />
+        <activity
+            android:name=".measure.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
