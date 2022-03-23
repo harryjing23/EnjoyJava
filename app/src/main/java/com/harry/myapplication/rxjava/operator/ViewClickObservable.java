@@ -27,7 +27,7 @@ public class ViewClickObservable extends Observable<Object> {
 
     @Override
     protected void subscribeActual(@NonNull Observer<? super Object> observer) {
-        // 按照RxJava源码的惯例，先包装一层
+        // 按照RxJava源码的惯例，先把Observer包装一层，并实现Disposable
         MyListener myListener = new MyListener(mView, observer);
         // 先调用onSubscribe
         observer.onSubscribe(myListener);
