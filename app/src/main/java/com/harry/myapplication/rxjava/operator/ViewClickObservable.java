@@ -19,7 +19,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 public class ViewClickObservable extends Observable<Object> {
 
     private final View mView;
-    private static final Object EVENT = new Object();
 
     public ViewClickObservable(View view) {
         mView = view;
@@ -27,9 +26,9 @@ public class ViewClickObservable extends Observable<Object> {
 
     @Override
     protected void subscribeActual(@NonNull Observer<? super Object> observer) {
-        // 按照RxJava源码的惯例，先包装一层
+        // 按照RxJava源码的惯例，先把Observer包装一层，并实现Disposable
         MyListener myListener = new MyListener(mView, observer);
-        // 先调用onSubscribe
+        // 先调用onSubscribe，需要传入一个Disposable
         observer.onSubscribe(myListener);
 
         mView.setOnClickListener(myListener);
@@ -50,7 +49,7 @@ public class ViewClickObservable extends Observable<Object> {
         @Override
         public void onClick(View v) {
             if (!isDisposed()) {
-                mObserver.onNext(EVENT);
+                mObserver.onNext(mView);
             }
         }
 
