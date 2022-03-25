@@ -7,4 +7,9 @@ package com.harry.myapplication.design;
  */
 public class Apple implements Fruit {
     int price = 100;
+
+    @Override
+    public void accept(Visit visit) {
+        visit.sell(this);
+    }
 }

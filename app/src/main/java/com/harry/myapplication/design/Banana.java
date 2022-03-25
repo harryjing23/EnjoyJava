@@ -1,12 +1,12 @@
 package com.harry.myapplication.design;
 
 /**
- * Created on 2021/9/17.
+ * Created on 2022/3/25.
  *
  * @author harry
  */
-public class Orange implements Fruit {
-    int price = 80;
+public class Banana implements Fruit {
+    int price = 20;
 
     @Override
     public void accept(Visit visit) {

@@ -6,4 +6,6 @@ package com.harry.myapplication.design;
  * @author harry
  */
 public interface Fruit {
+
+    void accept(Visit visit);
 }
