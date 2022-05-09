@@ -2,6 +2,13 @@
 buildscript {
     ext.kotlin_version = '1.6.0-RC'
     repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/public'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+        }
+        mavenLocal()
         google()
         mavenCentral()
     }
@@ -16,9 +23,16 @@ buildscript {
 
 allprojects {
     repositories {
+//        jcenter() // Warning: this repository is going to shut down soon
+        maven {
+            url 'https://maven.aliyun.com/repository/public'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+        }
+        mavenLocal()
         google()
         mavenCentral()
-//        jcenter() // Warning: this repository is going to shut down soon
     }
 }
 
